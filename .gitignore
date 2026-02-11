@@ -1,0 +1,35 @@
+# --- Compilation C++ Standard (Fichiers temporaires) ---
+*.o
+*.obj
+*.d
+
+# Bibliothèques compilées
+# On ignore les .a qui sont générés après la compilation de Raylib
+# Mais cela ne touche pas aux fichiers sources (.c, .h, .cpp)
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Exécutables
+*.exe
+*.out
+
+# --- Fichiers générés à la racine UNIQUEMENT ---
+# Le slash '/' au début assure qu'on ignore seulement ceux à la racine
+# Si raylib contient un index.html dans ses dossiers, il sera CONSERVÉ.
+/index.html
+/index.js
+/index.data
+/index.wasm
+
+# Dossiers de build (générés à la racine)
+/Build_Windows/
+/*.app/
+
+# --- IDE et Système ---
+.vscode/
+.DS_Store
+.swp
+Thumbs.db

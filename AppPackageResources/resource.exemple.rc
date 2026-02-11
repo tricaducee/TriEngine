@@ -1,0 +1,39 @@
+// 1. LES INCLUDES
+// Nécessaire pour définir certaines constantes Windows standard
+#include <windows.h>
+
+// 2. L'ICÔNE
+// Syntaxe : <ID> ICON "<chemin>"
+// "GLFW_ICON" est un ID spécifique que Raylib/GLFW recherche souvent automatiquement.
+// Sinon, on utilise souvent l'ID 101.
+GLFW_ICON ICON "app.ico"
+
+// 3. LES INFORMATIONS DE VERSION
+// Attention : Syntaxe très stricte ici !
+1 VERSIONINFO
+FILEVERSION     1,0,0,0      // Version binaire (utilisez des virgules !)
+PRODUCTVERSION  1,0,0,0      // Version produit binaire
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    // 0409 = Anglais US, 04E4 = Encodage Windows Multilingue
+    // C'est le standard le plus compatible.
+    BLOCK "040904E4"
+    BEGIN
+      // Les clés standards visibles dans l'explorateur Windows :
+      VALUE "CompanyName",      "Mon Studio\0"
+      VALUE "FileDescription",  "Le meilleur jeu du monde\0"
+      VALUE "FileVersion",      "1.0.0\0"          // Version texte (avec points)
+      VALUE "InternalName",     "monjeu_engine\0"
+      VALUE "LegalCopyright",   "(c) 2024 Mon Studio\0"
+      VALUE "OriginalFilename", "MonJeu.exe\0"     // Nom original de l'exe
+      VALUE "ProductName",      "Super Raylib Game\0"
+      VALUE "ProductVersion",   "1.0.0\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    // Indique la langue de traduction (doit correspondre au BLOCK ci-dessus)
+    VALUE "Translation", 0x409, 1252
+  END
+END

@@ -1,0 +1,44 @@
+NAME = MyGame
+SRC = src/main.cpp TriEngine/src/TriEngine.cpp
+
+OBJ = $(SRC:%.cpp=%.o)
+
+CXXFLAGS = -std=c++17 -Wall -Werror -Wextra
+
+ifeq ($(DEBUG), 1)
+	CXXFLAGS += -fsanitize=address -g3
+endif
+
+CC = g++
+RM = rm -rf
+
+all: $(NAME)
+
+app: $(NAME)
+	@rm -rf $(NAME).app && mkdir -p $(NAME).app/Contents/MacOS && mkdir $(NAME).app/Contents/Resources
+	@cp -r $(NAME) $(NAME).app/Contents/MacOS/$(NAME)
+	@cp -r AppPackageResources/Info.plist $(NAME).app/Contents/
+	@cp -r AppPackageResources/favicon.icns $(NAME).app/Contents/Resources/favicon.icns
+	@cp -r assets $(NAME).app/Contents/Resources/assets
+	@xattr -cr "$(NAME).app"
+	@find "$(NAME).app" -name ".DS_Store" -delete
+	@codesign --force --deep --sign - "$(NAME).app"
+
+%.o: %.cpp
+	$(CC) $(CXXFLAGS) -o $@ -c $<
+
+$(NAME): $(OBJ)
+	make -C lib/raylib/src/ PLATFORM=PLATFORM_DESKTOP
+	$(CC) $(CXXFLAGS) $(OBJ) -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL lib/raylib/src/libraylib.a -o $(NAME)
+
+clean:
+	@$(RM) $(OBJ)
+
+fclean: clean
+	@$(RM) $(NAME)
+	@$(RM) $(NAME).app
+	make -C lib/raylib/src/ clean
+
+re: fclean all
+
+.PHONY: all clean fclean re

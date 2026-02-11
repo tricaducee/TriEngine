@@ -1,0 +1,33 @@
+// resource.rc
+// 1. LES INCLUDES
+// Nécessaire pour définir certaines constantes Windows standard
+#include <windows.h>
+
+// 1. L'ICÔNE
+// Le premier icône défini ici sera celui utilisé par l'Explorateur Windows
+GLFW_ICON ICON "favicon.ico" 
+
+// 2. LES INFORMATIONS DE VERSION (Clic droit -> Propriétés -> Détails)
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4" // Langue (Anglais US par défaut standard)
+    BEGIN
+      VALUE "CompanyName", "Game Seed"
+      VALUE "FileDescription", "MyGame/App"
+      VALUE "FileVersion", "1.0"
+      VALUE "InternalName", "MyGame"
+      VALUE "LegalCopyright", "(c) 2025 Tricaducee"
+      VALUE "OriginalFilename", "MyGame.exe"
+      VALUE "ProductName", "MyGame"
+      VALUE "ProductVersion", "1.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END
