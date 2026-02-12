@@ -1,5 +1,6 @@
 #include "../lib/raylib/src/raylib.h"
 #include "../TriEngine/include/TriEngine.h"
+#include "../TriEngine/include/TriSprite.h"
 #include <string>
 #include <iostream>
 #define SPEED 300.0
@@ -15,7 +16,7 @@ int main()
 	unsigned int	n = 0;
 	float			x = 400;
 	float			y = 225;
-	unsigned		selectSpriteX = 0;
+	// unsigned		selectSpriteX = 0;
 	unsigned		selectSpriteY = 0;
 	std::string nString;
 	int			gamepad = 0;
@@ -26,6 +27,8 @@ int main()
 	Tri::Engine engine(800, 450, "raylib [core] example - basic window");
 	tmpStr = (std::string)((std::string)SPRITES_PATH + (std::string)"spritesheet.png");
 	spritesheet = LoadTexture(tmpStr.c_str());
+	Tri::Sprite sprite(spritesheet, (Rectangle){0, 0, SPRITE_SIZE, SPRITE_SIZE}, 11);
+	sprite.setOriginToCenter();
 	tmpStr = (std::string)((std::string)SOUNDS_PATH + (std::string)"Notif2.wav");
 	sfx = LoadSound(tmpStr.c_str());
 	tmpStr = (std::string)((std::string)MUSICS_PATH + (std::string)"GameJam J42 Music Theme.wav");
@@ -37,24 +40,20 @@ int main()
 	// 	CloseWindow();
 	// 	return (1);
 	// }
-	SetWindowState(FLAG_WINDOW_RESIZABLE);
+	// SetWindowState(FLAG_WINDOW_RESIZABLE);
     engine.loop([&]{
 		UpdateMusicStream(bo);
 		if (IsKeyPressed(KEY_F))
 		{
-			// if (IsWindowFullscreen())
-
 			PlaySound(sfx);
-			//if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-
 			ToggleFullscreen();
 		}
-		if ((IsKeyPressed(KEY_D) || IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) && selectSpriteX < SPRITE_X)
-			selectSpriteX += SPRITE_SIZE;
+		if ((IsKeyPressed(KEY_D) || IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_LEFT_FACE_RIGHT))/* && selectSpriteX < SPRITE_X*/)
+			/*selectSpriteX += SPRITE_SIZE*/ sprite++;
 		if ((IsKeyPressed(KEY_S) || IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) && selectSpriteY < SPRITE_Y)
 			selectSpriteY += SPRITE_SIZE;
-		if ((IsKeyPressed(KEY_A) || IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) && selectSpriteX > 0)
-			selectSpriteX -= SPRITE_SIZE;
+		if ((IsKeyPressed(KEY_A) || IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_LEFT_FACE_LEFT))/* && selectSpriteX > 0*/)
+			/*selectSpriteX -= SPRITE_SIZE*/ sprite--;
 		if ((IsKeyPressed(KEY_W) || IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_LEFT_FACE_UP)) && selectSpriteY > 0)
 			selectSpriteY -= SPRITE_SIZE;
 		if ((IsKeyDown(KEY_DOWN) || GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_Y) > 0.1) && (int)y < GetScreenHeight() - 40)
@@ -71,10 +70,11 @@ int main()
 				DrawText("Gamepad available", GetScreenWidth() - 300, GetScreenHeight() - 40, 30, LIGHTGRAY);
             ClearBackground(RAYWHITE);
 			DrawCircle(x, y, 40, {255,0,0,127});
-			Rectangle	source = {(float)selectSpriteX, (float)selectSpriteY, SPRITE_SIZE, SPRITE_SIZE};
-			Rectangle	dest = {400, 225, SPRITE_SIZE * 3, SPRITE_SIZE * 3};
+			// Rectangle	source = {(float)selectSpriteX, (float)selectSpriteY, SPRITE_SIZE, SPRITE_SIZE};
+			// Rectangle	dest = {400, 225, SPRITE_SIZE * 3, SPRITE_SIZE * 3};
 			DrawTexture(spritesheet, 20, 20, WHITE);
-			DrawTexturePro(spritesheet, source, dest, (Vector2){SPRITE_SIZE * 3 / 2, SPRITE_SIZE * 3 / 2}, 0, WHITE);
+			sprite.draw((Vector2){static_cast<float>(GetScreenWidth() / 2.0), static_cast<float>(GetScreenHeight() / 2.0)}, 5.0);
+			// DrawTexturePro(spritesheet, source, dest, (Vector2){SPRITE_SIZE * 3 / 2, SPRITE_SIZE * 3 / 2}, 0, WHITE);
             //DrawText(nString.c_str(), 400, 225, 50, LIGHTGRAY);
         EndDrawing();
 		++n;

@@ -81,7 +81,7 @@ void	Tri::Engine::loop(std::function<void()> userLoop)
 {
 	this->_userLoop = userLoop;
 	#if defined(__EMSCRIPTEN__)
-		emscripten_set_main_loop_arg(_emscriptenLoop, this, TRI_FPS, 1);
+		emscripten_set_main_loop_arg(_emscriptenLoop, this, 0, 1);
 	#else
 	while (!WindowShouldClose())
 		userLoop();
