@@ -1,5 +1,5 @@
 NAME = MyGame
-SRC = src/main.cpp TriEngine/src/TriEngine.cpp TriEngine/src/TriSprite.cpp
+SRC = src/main.cpp TriEngine/src/TriEngine.cpp TriEngine/src/TriSprite.cpp TriEngine/src/TriObject.cpp TriEngine/src/TriCamera.cpp TriEngine/src/TriGroup.cpp
 OBJ = $(SRC:%.cpp=%.o)
 
 # --- CONFIGURATION PAR DÉFAUT ---

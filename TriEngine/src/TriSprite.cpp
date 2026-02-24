@@ -1,105 +1,407 @@
 #include "../include/TriSprite.h"
-#include <iostream>
+#include "../include/TriCamera.h"
+// #include <iostream>
 
-Tri::Sprite::Sprite(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame)
-: _spriteSheet(spriteSheet), _spriteRectangle(spriteRectangle), _nFrame(nFrame), _origin({0, 0}), _frameIndex(0) {
+Tri::FrameSet::FrameSet(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame)
+: _spriteSheet(spriteSheet), _nFrame(nFrame), _origin({0, 0}), _frameIndex(0), _initStartIndex(0), _inCamera(true), _cameraSpeed(1.0f), _spriteRectangle(spriteRectangle) {
 }
 
-Tri::Sprite::Sprite(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin)
-: _spriteSheet(spriteSheet), _spriteRectangle(spriteRectangle), _nFrame(nFrame), _origin(origin), _frameIndex(0) {
+Tri::FrameSet::FrameSet(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin)
+: _spriteSheet(spriteSheet), _nFrame(nFrame), _origin(origin), _frameIndex(0), _initStartIndex(0), _inCamera(true), _cameraSpeed(1.0f), _spriteRectangle(spriteRectangle) {
 }
 
 
-// Tri::Sprite::~Sprite() {
+// Tri::FrameSet::~FrameSet() {
 
 // }
 
-void	Tri::Sprite::setOrigin(Vector2 origin) {
+void	Tri::FrameSet::setOrigin(Vector2 origin) {
 	this->_origin = origin;
 }
 
-void	Tri::Sprite::setOriginToCenter() {
+void	Tri::FrameSet::setOriginToCenter() {
 	this->_origin.x = this->_spriteRectangle.width / 2.0;
 	this->_origin.y = this->_spriteRectangle.height / 2.0;
 }
 
-void	Tri::Sprite::setFrameIndex(unsigned int index) {
+void	Tri::FrameSet::setFrameIndex(unsigned int index) {
 	this->_frameIndex = index % this->_nFrame;
 }
 
-unsigned int	Tri::Sprite::getFrameIndex() const {
+void	Tri::FrameSet::setCameraSpeed(float speed) {
+	this->_cameraSpeed = speed;
+}
+void	Tri::FrameSet::setInCamera(bool inCamera) {
+	this->_inCamera = inCamera;
+}
+
+void	Tri::FrameSet::resetFrameIndex() {
+	this->_frameIndex = this->_initStartIndex;
+}
+
+void	Tri::FrameSet::setInitStartIndex(unsigned int start){
+	this->_initStartIndex = start % this->_nFrame;
+	this->_frameIndex = this->_initStartIndex;
+}
+
+unsigned int	Tri::FrameSet::getFrameIndex() const {
 	return (this->_frameIndex);
 }
 
 
-unsigned int	Tri::Sprite::getNFrame() const {
+unsigned int	Tri::FrameSet::getNFrame() const {
 	return this->_nFrame;
 }
 
-void	Tri::Sprite::draw(Vector2 position, float scale) const {
+Vector2	Tri::FrameSet::getOrigin() const {
+	return this->_origin;
+}
+
+Rectangle		Tri::FrameSet::getSpriteRectangle() const {
+	return (this->_spriteRectangle);
+}
+
+void	Tri::FrameSet::draw(Vector2 position) const {
+	position = Tri::convertCamera(position, this->_cameraSpeed);
 	Rectangle	source = {.x=this->_spriteRectangle.x + (this->_frameIndex * this->_spriteRectangle.width), .y=this->_spriteRectangle.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
-	Rectangle	dest = {.x=position.x, .y= position.y, .width=this->_spriteRectangle.width * scale, .height=this->_spriteRectangle.height * scale};
+	Rectangle	dest = {.x=position.x, .y=position.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
+
+	DrawTexturePro(this->_spriteSheet, source, dest, (Vector2){this->_origin.x, this->_origin.y}, 0, WHITE);
+}
+
+void	Tri::FrameSet::draw(Vector2 position, float scale) const {
+	position = Tri::convertCamera(position, this->_cameraSpeed);
+	Rectangle	source = {.x=this->_spriteRectangle.x + (this->_frameIndex * this->_spriteRectangle.width), .y=this->_spriteRectangle.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
+	Rectangle	dest = {.x=position.x, .y=position.y, .width=this->_spriteRectangle.width * scale, .height=this->_spriteRectangle.height * scale};
 
 	DrawTexturePro(this->_spriteSheet, source, dest, (Vector2){this->_origin.x * scale, this->_origin.y * scale}, 0, WHITE);
 }
 
-void	Tri::Sprite::drawDeformed(Rectangle dest) const {
+void	Tri::FrameSet::drawDeformed(Rectangle dest) const {
+	Vector2	position = Tri::convertCamera({dest.x, dest.y}, this->_cameraSpeed);
+	dest.x = position.x;
+	dest.y = position.y;
 	Rectangle	source = {.x=this->_spriteRectangle.x + (this->_frameIndex * this->_spriteRectangle.width), .y=this->_spriteRectangle.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
 
 	DrawTexturePro(this->_spriteSheet, source, dest, (Vector2){this->_origin.x * (dest.width / source.width), this->_origin.y * (dest.height / source.height)}, 0, WHITE);
 }
 
-void	Tri::Sprite::draw(Vector2 position, float scale, float rotation) const {
+void	Tri::FrameSet::draw(Vector2 position, float scale, float rotation) const {
+	position = Tri::convertCamera(position, this->_cameraSpeed);
 	Rectangle	source = {.x=this->_spriteRectangle.x + (this->_frameIndex * this->_spriteRectangle.width), .y=this->_spriteRectangle.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
 	Rectangle	dest = {.x=position.x, .y= position.y, .width=this->_spriteRectangle.width * scale, .height=this->_spriteRectangle.height * scale};
 
 	DrawTexturePro(this->_spriteSheet, source, dest, (Vector2){this->_origin.x * scale, this->_origin.y * scale}, rotation, WHITE);
 }
 
-void	Tri::Sprite::drawDeformed(Rectangle dest, float rotation) const {
+void	Tri::FrameSet::drawDeformed(Rectangle dest, float rotation) const {
+	Vector2	position = Tri::convertCamera({dest.x, dest.y}, this->_cameraSpeed);
+	dest.x = position.x;
+	dest.y = position.y;
 	Rectangle	source = {.x=this->_spriteRectangle.x + (this->_frameIndex * this->_spriteRectangle.width), .y=this->_spriteRectangle.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
 
 	DrawTexturePro(this->_spriteSheet, source, dest, (Vector2){this->_origin.x * (dest.width / source.width), this->_origin.y * (dest.height / source.height)}, rotation, WHITE);
 }
 
-void	Tri::Sprite::draw(Vector2 position, float scale, float rotation, unsigned int index) const {
+void	Tri::FrameSet::draw(Vector2 position, float scale, float rotation, unsigned int index) const {
+	position = Tri::convertCamera(position, this->_cameraSpeed);
 	Rectangle	source = {.x=this->_spriteRectangle.x + (index % this->_nFrame * this->_spriteRectangle.width), .y=this->_spriteRectangle.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
 	Rectangle	dest = {.x=position.x, .y= position.y, .width=this->_spriteRectangle.width * scale, .height=this->_spriteRectangle.height * scale};
 
 	DrawTexturePro(this->_spriteSheet, source, dest, (Vector2){this->_origin.x * scale, this->_origin.y * scale}, rotation, WHITE);
 }
 
-void	Tri::Sprite::drawDeformed(Rectangle dest, float rotation, unsigned int index) const {
+void	Tri::FrameSet::drawDeformed(Rectangle dest, float rotation, unsigned int index) const {
+	Vector2	position = Tri::convertCamera({dest.x, dest.y}, this->_cameraSpeed);
+	dest.x = position.x;
+	dest.y = position.y;
 	Rectangle	source = {.x=this->_spriteRectangle.x + (index % this->_nFrame * this->_spriteRectangle.width), .y=this->_spriteRectangle.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height};
 
 	DrawTexturePro(this->_spriteSheet, source, dest, (Vector2){this->_origin.x * (dest.width / source.width), this->_origin.y * (dest.height / source.height)}, rotation, WHITE);
 }
 
-void	Tri::Sprite::addFrameIndex() {
+void	Tri::FrameSet::addFrameIndex() {
 	this->_frameIndex = (this->_frameIndex + 1) % this->_nFrame;
 }
-void	Tri::Sprite::addFrameIndex(unsigned int value) {
+void	Tri::FrameSet::addFrameIndex(unsigned int value) {
 	this->_frameIndex = (this->_frameIndex + value) % this->_nFrame;
 }
-void	Tri::Sprite::susFrameIndex() {
+void	Tri::FrameSet::susFrameIndex() {
 	this->_frameIndex = this->_frameIndex > 0 ? this->_frameIndex - 1 : this->_nFrame - 1;
 }
-void	Tri::Sprite::susFrameIndex(unsigned int value) {
+void	Tri::FrameSet::susFrameIndex(unsigned int value) {
 	this->_frameIndex = (value % this->_nFrame) > this->_frameIndex ? this->_nFrame - (value % this->_nFrame) - this->_frameIndex : this->_frameIndex - (value % this->_nFrame);
 }
 
-void	Tri::Sprite::operator++() {
+void	Tri::FrameSet::operator++() {
 	this->addFrameIndex();
 }
 
-void	Tri::Sprite::operator--() {
+void	Tri::FrameSet::operator--() {
 	this->susFrameIndex();
 }
 
-void	Tri::Sprite::operator++(int) {
+void	Tri::FrameSet::operator++(int) {
 	this->addFrameIndex();
 }
 
-void	Tri::Sprite::operator--(int) {
+void	Tri::FrameSet::operator--(int) {
 	this->susFrameIndex();
+}
+
+//-----------------------FrameSetHitbox----------------------------//
+
+Tri::FrameSetHitbox::FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame)
+: FrameSet(spriteSheet, spriteRectangle, nFrame), _hitboxesVec(nFrame) {}
+
+Tri::FrameSetHitbox::FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin)
+: FrameSet(spriteSheet, spriteRectangle, nFrame, origin), _hitboxesVec(nFrame) {}
+
+Tri::FrameSetHitbox::FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, std::vector<std::vector<Rectangle>> hitboxesVec)
+: FrameSet(spriteSheet, spriteRectangle, nFrame), _hitboxesVec(hitboxesVec) {
+	if (this->_hitboxesVec.size() < nFrame)
+		this->_hitboxesVec.resize(nFrame);
+}
+
+Tri::FrameSetHitbox::FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, std::vector<std::vector<Rectangle>> hitboxesVec)
+: FrameSet(spriteSheet, spriteRectangle, nFrame, origin), _hitboxesVec(hitboxesVec) {
+	if (this->_hitboxesVec.size() < nFrame)
+		this->_hitboxesVec.resize(nFrame);
+
+}
+
+std::vector<Rectangle>	Tri::FrameSetHitbox::getFrameHitboxes() const {
+	return (this->_hitboxesVec[this->getFrameIndex()]);
+}
+
+std::vector<Rectangle>	Tri::FrameSetHitbox::getFrameHitboxes(unsigned int index) const {
+	if (index < this->getFrameIndex())
+		return (this->_hitboxesVec[index]);
+	return (std::vector<Rectangle>());
+}
+
+void	Tri::FrameSetHitbox::addHitboxToFrame(unsigned int index, Rectangle hitBox) {
+	if (index < this->getFrameIndex())
+		this->_hitboxesVec[index].push_back(hitBox);
+}
+
+bool	Tri::FrameSetHitbox::checkRecCollision(Rectangle rec, Vector2 framePosition) {
+	Vector2	origin = this->getOrigin();
+	if (!CheckCollisionRecs(rec, {.x=framePosition.x - origin.x, .y=framePosition.y - origin.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height}))
+		return (false);
+	for (const auto& hitbox : this->_hitboxesVec[this->getFrameIndex()]) {
+		if (CheckCollisionRecs(rec, {.x=framePosition.x + hitbox.x - origin.x, .y=framePosition.y + hitbox.y - origin.y, .width=hitbox.width, .height=hitbox.height}))
+			return (true);
+	}
+	return (false);
+}
+
+bool	Tri::FrameSetHitbox::checkRecCollision(Rectangle rec, Vector2 framePosition, unsigned int frame) {
+	Vector2	origin = this->getOrigin();
+	if (frame >= this->getNFrame() || !CheckCollisionRecs(rec, {.x=framePosition.x - origin.x, .y=framePosition.y - origin.y, .width=this->_spriteRectangle.width, .height=this->_spriteRectangle.height}))
+		return (false);
+	for (const auto& hitbox : this->_hitboxesVec[frame]) {
+		if (CheckCollisionRecs(rec, {.x=framePosition.x + hitbox.x - origin.x, .y=framePosition.y + hitbox.y - origin.y, .width=hitbox.width, .height=hitbox.height}))
+			return (true);
+	}
+	return (false);
+}
+
+bool	Tri::FrameSetHitbox::checkRecCollision(Rectangle rec, Vector2 framePosition, float scale) {
+	Vector2	origin = this->getOrigin();
+	if (!CheckCollisionRecs(rec, {.x=framePosition.x - (origin.x * scale), .y=framePosition.y - (origin.y * scale), .width=(this->_spriteRectangle.width * scale), .height=(this->_spriteRectangle.height * scale)}))
+		return (false);
+	for (const auto& hitbox : this->_hitboxesVec[this->getFrameIndex()]) {
+		if (CheckCollisionRecs(rec, {.x=framePosition.x + (hitbox.x * scale) - (origin.x * scale), .y=framePosition.y + (hitbox.y * scale) - (origin.y * scale), .width=(hitbox.width * scale), .height=(hitbox.height * scale)}))
+			return (true);
+	}
+	return (false);
+}
+
+bool	Tri::FrameSetHitbox::checkRecCollision(Rectangle rec, Vector2 framePosition, unsigned int frame, float scale) {
+	Vector2	origin = this->getOrigin();
+	if (frame >= this->getNFrame() || !CheckCollisionRecs(rec, {.x=framePosition.x - (origin.x * scale), .y=framePosition.y - (origin.y * scale), .width=(this->_spriteRectangle.width * scale), .height=(this->_spriteRectangle.height * scale)}))
+		return (false);
+	for (const auto& hitbox : this->_hitboxesVec[frame]) {
+		if (CheckCollisionRecs(rec, {.x=framePosition.x + (hitbox.x * scale) - (origin.x * scale), .y=framePosition.y + (hitbox.y * scale) - (origin.y * scale), .width=(hitbox.width * scale), .height=(hitbox.height * scale)}))
+			return (true);
+	}
+	return (false);
+}
+
+//------------------------AnimatedSprite----------------------------//
+
+Tri::AnimatedSprite::AnimatedSprite(std::string spritePath)
+: _textureLoaded(false), _nFrameSet(0), _frameSetIndex(0), _rotation(0), _cameraSpeed(1.0f)
+{
+	this->_spriteSheet = LoadTexture(spritePath.c_str());
+	if (IsTextureValid(this->_spriteSheet))
+		this->_textureLoaded = true;
+	// this->_frameSets;
+	// this->_nFrameSet;
+	// this->_frameSetIndex;
+	// this->_timer;
+	// this->_fps;
+	this->_scale = 1.0;
+}
+
+Tri::AnimatedSprite::AnimatedSprite(std::string spritePath, float scale)
+: _textureLoaded(false), _nFrameSet(0), _frameSetIndex(0), _scale(scale), _rotation(0), _cameraSpeed(1.0f)
+{
+	this->_spriteSheet = LoadTexture(spritePath.c_str());
+	if (IsTextureValid(this->_spriteSheet))
+		this->_textureLoaded = true;
+	if (this->_scale < 0)
+		this->_scale = 0;
+	// this->_frameSets;
+	// this->_nFrameSet;
+	// this->_frameSetIndex;
+	// this->_timer;
+	// this->_fps;
+}
+
+Tri::AnimatedSprite::~AnimatedSprite() {
+	if (this->_textureLoaded)
+		UnloadTexture(this->_spriteSheet);
+	this->_textureLoaded = false;
+}
+
+void	Tri::AnimatedSprite::draw(Vector2 position) {
+	if (this->_fps[this->_frameSetIndex] != 0)
+	{
+		this->_timer[this->_frameSetIndex] += GetFrameTime();
+		if (this->_timer[this->_frameSetIndex] >= this->_fps[this->_frameSetIndex])
+		{
+			this->_timer[this->_frameSetIndex] -= this->_fps[this->_frameSetIndex];
+			this->_frameSets[this->_frameSetIndex]++;
+		}
+	}
+	if (this->_scale != 1.0)
+	{
+		if (this->_rotation != 0)
+			this->_frameSets[this->_frameSetIndex].draw(position, this->_scale, this->_rotation);
+		else
+			this->_frameSets[this->_frameSetIndex].draw(position, this->_scale);
+	}
+	else
+		this->_frameSets[this->_frameSetIndex].draw(position);
+	//--------Begin Debug hitbox-------//
+	std::vector<Rectangle>	recVec = this->_frameSets[this->_frameSetIndex].getFrameHitboxes();
+	Vector2	origin = this->_frameSets[this->_frameSetIndex].getOrigin();
+	Vector2 recPosition;
+	for (unsigned long i = 0; i < recVec.size(); i++)
+	{
+		recPosition = Tri::convertCamera({.x=position.x + (recVec[i].x * this->_scale) - (origin.x * this->_scale), .y=position.y + (recVec[i].y * this->_scale) - (origin.y * this->_scale)}, 1.0f);
+		DrawRectangleRec({recPosition.x, recPosition.y, .width=(recVec[i].width * this->_scale), .height=(recVec[i].height * this->_scale)}, {255,0,0,127});
+	}
+	//--------End Debug hitbox-------//
+}
+
+void	Tri::AnimatedSprite::selectFrameSet(unsigned int index) {
+	if (index != this->_frameSetIndex && index < this->_nFrameSet)
+	{
+		this->_frameSets[index].resetFrameIndex();
+		this->_timer[index] = 0;
+		this->_frameSetIndex = index;
+	}
+}
+
+void	Tri::AnimatedSprite::setScale(float scale) {
+	if (scale > 0)
+		this->_scale = scale;
+	else
+		this->_scale = 0;
+}
+
+void	Tri::AnimatedSprite::setRotaion(float rotation) {
+	this->_rotation = rotation;
+}
+
+void	Tri::AnimatedSprite::setCameraSpeed(float cameraSpeedFactor) {
+	for (auto& frameSet : this->_frameSets) {
+		frameSet.setCameraSpeed(cameraSpeedFactor);
+	}
+}
+
+// unsigned int	Tri::AnimatedSprite::addFrameSet(Tri::FrameSet frameSet, float fps) {
+// 	this->_frameSets.emplace_back(frameSet);
+// }
+
+unsigned int	Tri::AnimatedSprite::addFrameSet(Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, float fps) {
+	this->_frameSets.emplace_back(this->_spriteSheet, spriteRectangle, nFrame, origin);
+	if (fps > 0)
+		this->_fps.emplace_back(1.0 / fps);
+	else
+		this->_fps.emplace_back(0);
+	this->_timer.emplace_back(0);
+	return (this->_nFrameSet++);
+}
+
+unsigned int	Tri::AnimatedSprite::addFrameSet(Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, float fps, const std::vector<std::vector<Rectangle>> &hitboxesVec) {
+	this->_frameSets.emplace_back(this->_spriteSheet, spriteRectangle, nFrame, origin, hitboxesVec);
+	if (fps > 0)
+		this->_fps.push_back(1.0 / fps);
+	else
+		this->_fps.push_back(0);
+	this->_timer.push_back(0);
+	return (this->_nFrameSet++);
+}
+
+void		Tri::AnimatedSprite::changeFps(unsigned int index, float fps) {
+	if (index < this->_nFrameSet)
+	{
+		if (fps > 0)
+			this->_fps[index] = 1.0 / fps;
+		else
+			this->_fps[index] = 0;
+	}
+}
+
+Tri::FrameSetHitbox	&Tri::AnimatedSprite::getFrameSet() {
+	return (this->_frameSets[this->_frameSetIndex]);
+}
+
+float			Tri::AnimatedSprite::getScale() const {
+	return (this->_scale);
+}
+
+Vector2			Tri::AnimatedSprite::getOrigin() const {
+	return (this->_frameSets[this->_frameSetIndex].getOrigin());
+}
+
+unsigned int	Tri::AnimatedSprite::getFrameSetIndex() const {
+	return (this->_frameSetIndex);
+}
+
+Tri::FrameSetHitbox	&Tri::AnimatedSprite::getFrameSet(unsigned int index) {
+	if (index < this->_nFrameSet)
+		return (this->_frameSets[index]);
+	return (this->_frameSets[this->_nFrameSet]);
+}
+
+Texture2D		&Tri::AnimatedSprite::getSpriteSheet() {
+	return (this->_spriteSheet);
+}
+
+bool	Tri::AnimatedSprite::checkRecCollision(Rectangle rec, Vector2 position) {
+	if (this->_scale == 1.0)
+		return (this->_frameSets[this->_frameSetIndex].checkRecCollision(rec, position));
+	else
+		return (this->_frameSets[this->_frameSetIndex].checkRecCollision(rec, position, this->_scale));	
+}
+
+void	Tri::AnimatedSprite::operator++() {
+	this->_frameSetIndex = (this->_frameSetIndex + 1) % this->_nFrameSet;
+}
+
+void	Tri::AnimatedSprite::operator--() {
+	this->_frameSetIndex = this->_frameSetIndex > 0 ? this->_frameSetIndex - 1 : this->_nFrameSet - 1;
+}
+
+void	Tri::AnimatedSprite::operator++(int) {
+	this->_frameSetIndex = (this->_frameSetIndex + 1) % this->_nFrameSet;
+}
+
+void	Tri::AnimatedSprite::operator--(int) {
+	this->_frameSetIndex = this->_frameSetIndex > 0 ? this->_frameSetIndex - 1 : this->_nFrameSet - 1;
 }

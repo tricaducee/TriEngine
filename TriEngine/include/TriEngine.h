@@ -1,8 +1,10 @@
 #ifndef TRI_ENGINE_H
 # define TRI_ENGINE_H
-# define TRI_FPS 60
+# define TRI_FPS 144
 # include <string>
 # include <functional>
+# define TRI_WINDOW_WIDTH 720
+# define TRI_WINDOW_HEIGHT 480
 namespace Tri {
 	class Engine {
 		private:

@@ -22,6 +22,8 @@ Tri::Engine::Engine()
 	
     	CFRelease(resourcesURL);
 	#endif
+	InitWindow(TRI_WINDOW_WIDTH, TRI_WINDOW_HEIGHT, "");
+	InitAudioDevice();
 }
 
 Tri::Engine::Engine(int width, int height, const char *windowName)
