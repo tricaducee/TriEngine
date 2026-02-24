@@ -2,6 +2,7 @@
 # define TRI_SPRITE_H
 # include "../../lib/raylib/src/raylib.h"
 # include <vector>
+# include <string>
 
 namespace Tri {
 	class FrameSet
