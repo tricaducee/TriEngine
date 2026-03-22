@@ -1,10 +1,10 @@
 #include "../include/TriGravity.h"
 
-Tri::Gravity::Gravity(Vector2 direction) {
+Tri::Gravity::Gravity(Vector2 direction) : _direction(direction), _gravity(1.0f) {
 
 }
 
-Tri::Gravity::Gravity(Vector2 direction, float gravity) {
+Tri::Gravity::Gravity(Vector2 direction, float gravity) : _direction(direction), _gravity(gravity) {
 
 }
 

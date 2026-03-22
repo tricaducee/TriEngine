@@ -3,6 +3,7 @@
 # include "../../lib/raylib/src/raylib.h"
 # include <vector>
 # include <string>
+# include "TriClass.h"
 
 namespace Tri {
 	class FrameSet
@@ -35,6 +36,7 @@ namespace Tri {
 			unsigned int	getFrameIndex() const;
 			Vector2			getOrigin() const;
 			Rectangle		getSpriteRectangle() const;
+			float			getCameraSpeed() const;
 			void	draw(Vector2 position) const;
 			void	draw(Vector2 position, float scale) const;
 			void	draw(Vector2 position, float scale, float rotation) const;
@@ -56,20 +58,22 @@ namespace Tri {
 	{
 		private:
 			FrameSetHitbox();
-			std::vector<std::vector<Rectangle>>	_hitboxesVec;
+			std::vector<std::vector<Tri::Circle>>	_hitboxesVec;
 		public:
 			FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame);
 			FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin);
-			FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, std::vector<std::vector<Rectangle>> hitboxesVec);
-			FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, std::vector<std::vector<Rectangle>> hitboxesVec);
+			FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, std::vector<std::vector<Circle>> hitboxesVec);
+			FrameSetHitbox(Texture2D &spriteSheet, Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, std::vector<std::vector<Circle>> hitboxesVec);
 			~FrameSetHitbox(){};
-			std::vector<Rectangle>	getFrameHitboxes() const;
-			std::vector<Rectangle>	getFrameHitboxes(unsigned int index) const;
-			void					addHitboxToFrame(unsigned int index, Rectangle hitBox);
-			bool					checkRecCollision(Rectangle rec, Vector2 framePosition);
-			bool					checkRecCollision(Rectangle rec, Vector2 framePosition, unsigned int frame);
-			bool					checkRecCollision(Rectangle rec, Vector2 framePosition, float scale);
-			bool					checkRecCollision(Rectangle rec, Vector2 framePosition, unsigned int frame, float scale);
+			std::vector<Tri::Circle>	getFrameHitboxes() const;
+			std::vector<Tri::Circle>	getFrameHitboxes(unsigned int index) const;
+			void					addHitboxToFrame(unsigned int index, Circle hitBox);
+			bool					checkRecCollision(Rectangle rec, Vector2 framePosition, float scale, float rotation);
+			bool					checkCircleCollision(Circle circle, Vector2 framePosition, float scale, float rotation);
+			// bool					checkRecCollision(Rectangle rec, Vector2 framePosition);
+			// bool					checkRecCollision(Rectangle rec, Vector2 framePosition, unsigned int frame);
+			// bool					checkRecCollision(Rectangle rec, Vector2 framePosition, float scale);
+			// bool					checkRecCollision(Rectangle rec, Vector2 framePosition, unsigned int frame, float scale);
 	};
 
 	class AnimatedSprite
@@ -83,28 +87,27 @@ namespace Tri {
 			unsigned int				_frameSetIndex;
 			std::vector<double>			_timer;
 			std::vector<float>			_fps;
-			float						_scale;
-			float						_rotation;
 			float						_cameraSpeed;
 		public:
 			AnimatedSprite(std::string spritePath);
-			AnimatedSprite(std::string spritePath, float scale);
 			~AnimatedSprite();
-			void	draw(Vector2 position);
+			// void	draw(Vector2 position);
+			void	draw(Vector2 position, float scale, float rotation, unsigned int indexDelay);
 			void	selectFrameSet(unsigned int index);
-			void	setScale(float scale);
-			void	setRotaion(float rotation);
+			// void	setScale(float scale);
+			// void	setRotaion(float rotation);
 			void	setCameraSpeed(float cameraSpeedFactor);
 			// unsigned int	addFrameSet(FrameSet frameSet, float fps);
 			unsigned int	addFrameSet(Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, float fps);
-			unsigned int	addFrameSet(Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, float fps, const std::vector<std::vector<Rectangle>> &hitboxesVec);
+			unsigned int	addFrameSet(Rectangle spriteRectangle, unsigned int nFrame, Vector2 origin, float fps, const std::vector<std::vector<Circle>> &hitboxesVec);
 			Texture2D		&getSpriteSheet();
 			FrameSetHitbox	&getFrameSet();
 			FrameSetHitbox	&getFrameSet(unsigned int index);
-			float			getScale() const;
+			// float			getScale() const;
 			Vector2			getOrigin() const;
 			unsigned int	getFrameSetIndex() const;
-			bool			checkRecCollision(Rectangle rec, Vector2 position);
+			bool			checkRecCollision(Rectangle rec, Vector2 position, float scale, float rotation);
+			bool			checkCircleCollision(Circle rec, Vector2 position, float scale, float rotation);
 			void		changeFps(unsigned int index, float fps);
 			void	operator++();
 			void	operator--();

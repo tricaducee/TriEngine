@@ -1,6 +1,6 @@
 #ifndef TRI_ENGINE_H
 # define TRI_ENGINE_H
-# define TRI_FPS 144
+# define TRI_FPS 60
 # include <string>
 # include <functional>
 # define TRI_WINDOW_WIDTH 720

@@ -22,6 +22,7 @@ void	Tri::Camera::setPosition(Vector2 position) {
 	this->_position = position;
 	this->_cameraRec.x = position.x - this->_origin.x;
 	this->_cameraRec.y = position.y - this->_origin.y;
+	this->refreshCamera();
 }
 
 Vector2	Tri::Camera::convertPosition(Vector2 position, float factor) {

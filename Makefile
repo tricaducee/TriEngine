@@ -1,11 +1,11 @@
 NAME = MyGame
-SRC = src/main.cpp TriEngine/src/TriEngine.cpp TriEngine/src/TriSprite.cpp TriEngine/src/TriObject.cpp TriEngine/src/TriCamera.cpp TriEngine/src/TriGroup.cpp
+SRC = src/main.cpp TriEngine/src/TriEngine.cpp TriEngine/src/TriSprite.cpp TriEngine/src/TriObject.cpp TriEngine/src/TriCamera.cpp TriEngine/src/TriGroup.cpp TriEngine/src/TriClass.cpp
 OBJ = $(SRC:%.cpp=%.o)
 
 # --- CONFIGURATION PAR DÉFAUT ---
 CC = g++
 RM = rm -rf
-CXXFLAGS = -std=c++17 -O3 -Wall -Werror -Wextra -I lib/raylib/src/
+CXXFLAGS = -std=c++17 -O3 -I lib/raylib/src/
 
 # Chemin vers la lib raylib statique
 RAYLIB_PATH = lib/raylib/src
@@ -41,7 +41,7 @@ ifeq ($(PLATFORM), WEB)
 	CC = em++
 	EXT = .html
 # Flags spécifiques web : on preload le dossier assets
-	LDFLAGS = -s USE_GLFW=3 -s "EXPORTED_RUNTIME_METHODS=['ccall','cwrap','requestFullscreen']" --preload-file assets --shell-file $(RES_DIR)/shell.html --preload-file $(RES_DIR)/favicon.ico@/favicon.ico
+	LDFLAGS = -s USE_GLFW=3 -s ALLOW_MEMORY_GROWTH=1 -s "EXPORTED_RUNTIME_METHODS=['ccall','cwrap','requestFullscreen']" --preload-file assets --shell-file $(RES_DIR)/shell.html --preload-file $(RES_DIR)/favicon.ico@/favicon.ico
 # LDFLAGS = -s USE_GLFW=3 -s ASYNCIFY --preload-file assets
 # On force Raylib en mode WEB
 	RAYLIB_MODE = PLATFORM_WEB
