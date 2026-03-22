@@ -1,8 +1,8 @@
 #ifndef TRI_OBJECT_H
 # define TRI_OBJECT_H
 # include "TriSprite.h"
-# define MAX_SPEED 900.0
-# define ACCELERATION_SPEED 2000.0
+# define MAX_SPEED 1800.0
+# define ACCELERATION_SPEED 3000.0
 # define FRICTION 0.98
 
 namespace Tri {

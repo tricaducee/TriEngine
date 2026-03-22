@@ -16,13 +16,13 @@ BEGIN
   BEGIN
     BLOCK "040904E4" // Langue (Anglais US par défaut standard)
     BEGIN
-      VALUE "CompanyName", "Game Seed"
-      VALUE "FileDescription", "MyGame/App"
+      VALUE "CompanyName", "Programmed Free Will"
+      VALUE "FileDescription", "SeaBal/App"
       VALUE "FileVersion", "1.0"
-      VALUE "InternalName", "MyGame"
+      VALUE "InternalName", "SeaBal"
       VALUE "LegalCopyright", "(c) 2025 Tricaducee"
-      VALUE "OriginalFilename", "MyGame.exe"
-      VALUE "ProductName", "MyGame"
+      VALUE "OriginalFilename", "SeaBal.exe"
+      VALUE "ProductName", "SeaBal"
       VALUE "ProductVersion", "1.0"
     END
   END

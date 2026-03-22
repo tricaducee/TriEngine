@@ -3,7 +3,7 @@
     <plist version="1.0">
     <dict>
       <key>CFBundleExecutable</key>
-      <string>MyGame</string>
+      <string>SeaBal</string>
       <key>CFBundleIconFile</key>
       <string>favicon</string>
     </dict>

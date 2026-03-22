@@ -9,14 +9,15 @@
 #include <unistd.h>
 
 #define CHUNK_SIZE 1000.0f
-#define CHUNK_DENSITY 20
-#define ALGUE_PERCENT 70
+#define CHUNK_DENSITY 30
+#define ALGUE_PERCENT 60
 #define SPEED 300.0f
 #define	SPRITE_SIZE 32
 #define SPRITE_Y SPRITE_SIZE * 10
 #define SPRITE_X SPRITE_SIZE * 10
 #define FISH_SPRITE_WIDTH 540
 #define FISH_SPRITE_HEIGHT 960
+#define SEAWEED_SPRITE_SIZE 128
 #define SPRITES_PATH "assets/sprites/"
 #define SOUNDS_PATH "assets/sounds/"
 #define MUSICS_PATH "assets/musics/"
@@ -27,12 +28,12 @@
 #define GAMEPAD_DEAD_MIN 0.15f
 #define	MAX_LIFE	100.0f
 #define	LEVEL_XP_REQUIER 1000.0f
-#define	LIFE_GAIN	0.5f
-#define	LIFE_LOOZE	1.5f
-#define XP_GAIN		10.0f
-#define XP_LOOZE	0.8f
+#define	LIFE_GAIN	1.0f
+#define	LIFE_LOOZE	2.5f
+#define XP_GAIN		20.0f
+#define XP_LOOZE	5.0f
 #define PLAYER_MIN_SIZE 0.1f
-#define WATER_COLOR {0, 53, 90, 20}
+#define WATER_COLOR {0, 53, 90, 60}
 
 enum {
 	TYPE_EMPTY,
@@ -254,16 +255,20 @@ int main()
 	// background.cameraSpeed = 0.5f;
 	// static Tri::Group	mainPlan({-150,-150,300,300});
 	static Vector2		camPosition{0,0};
-	static Tri::AnimatedSprite	spriteAlgue(static_cast<std::string>(SPRITES_PATH) + static_cast<std::string>("spritesheet.png"));
-	static unsigned int	algueAnimation = spriteAlgue.addFrameSet({0,SPRITE_SIZE * 3,SPRITE_SIZE,SPRITE_SIZE}, 2, {0,0}, 12.0f, {
-		{{0,5.0,SPRITE_SIZE / 4.0}},
-		{{0,5.0,SPRITE_SIZE / 4.0}}
+	static Tri::AnimatedSprite	spriteAlgue(static_cast<std::string>(SPRITES_PATH) + static_cast<std::string>("seaweed.png"));
+	static unsigned int	algueAnimation = spriteAlgue.addFrameSet({0,0,SEAWEED_SPRITE_SIZE,SEAWEED_SPRITE_SIZE}, 4, {0,0}, 0.0f, {
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}},
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}},
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}},
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}}
 	});
 	spriteAlgue.getFrameSet(algueAnimation).setOriginToCenter();
-	static Tri::AnimatedSprite	spriteBottle(static_cast<std::string>(SPRITES_PATH) + static_cast<std::string>("spritesheet.png"));
-	static unsigned int	bottleAnimation = spriteBottle.addFrameSet({0,SPRITE_SIZE * 3,SPRITE_SIZE,SPRITE_SIZE}, 2, {0,0}, 12.0f, {
-		{{0,15.0,SPRITE_SIZE / 4.0}, {0,-15.0,SPRITE_SIZE / 4.0}},
-		{{0,15.0,SPRITE_SIZE / 4.0}, {0,-15.0,SPRITE_SIZE / 4.0}}
+	static Tri::AnimatedSprite	spriteBottle(static_cast<std::string>(SPRITES_PATH) + static_cast<std::string>("seaweedRed.png"));
+	static unsigned int	bottleAnimation = spriteBottle.addFrameSet({0,0,SEAWEED_SPRITE_SIZE,SEAWEED_SPRITE_SIZE}, 4, {0,0}, 0.0f, {
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}},
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}},
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}},
+		{{0,0,SEAWEED_SPRITE_SIZE / 3.0}}
 	});
 	spriteBottle.getFrameSet(bottleAnimation).setOriginToCenter();
 	static Tri::AnimatedSprite	sprite(static_cast<std::string>(SPRITES_PATH) + static_cast<std::string>("fish.png"));
@@ -316,7 +321,17 @@ int main()
 	static Sound bottleSfx = LoadSound(tmpStr.c_str());
 	PlayMusicStream(bo);
 	engine.loop([&]{
-		UpdateMusicStream(bo);
+        UpdateMusicStream(bo);
+        
+        // 🌟 L'HORLOGE MANUELLE DES DÉCHETS (6 FPS)
+        static float envTimer = 0.0f;
+        envTimer += GetFrameTime();
+        if (envTimer >= 1.0f / 8.0f) {
+            envTimer -= (1.0f / 8.0f);
+            // Ton opérateur ++ magique va passer à la frame suivante !
+            spriteAlgue.getFrameSet(algueAnimation)++;
+            spriteBottle.getFrameSet(bottleAnimation)++;
+        }
 		if (IsKeyPressed(KEY_F)) {
             ToggleFullscreen();
         }

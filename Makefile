@@ -1,4 +1,4 @@
-NAME = MyGame
+NAME = SeaBal
 SRC = src/main.cpp TriEngine/src/TriEngine.cpp TriEngine/src/TriSprite.cpp TriEngine/src/TriObject.cpp TriEngine/src/TriCamera.cpp TriEngine/src/TriGroup.cpp TriEngine/src/TriClass.cpp
 OBJ = $(SRC:%.cpp=%.o)
 
@@ -89,7 +89,7 @@ resource.o: $(RES_DIR)/resource.rc
 # Linkage Final
 $(NAME)$(EXT): $(OBJ)
 	@echo "Building Raylib for $(PLATFORM)..."
-	make -C $(RAYLIB_PATH) PLATFORM=$(RAYLIB_MODE)
+	$(MAKE) -C $(RAYLIB_PATH) PLATFORM=$(RAYLIB_MODE)
 	@echo "Linking $(NAME)$(EXT)..."
 	$(CC) $(CXXFLAGS) $(OBJ) $(RAYLIB_LIB) $(SYS_LIBS) $(LDFLAGS) -o $(NAME)$(EXT)
 
@@ -120,7 +120,7 @@ ifeq ($(PLATFORM), MACOS)
 	@codesign --force --deep --sign - "$(NAME).app"
 	@echo "App Bundle created successfully."
 else
-	@echo "Error: 'make app' is only for MacOS."
+	@echo "Error: '$(MAKE) app' is only for MacOS."
 endif
 
 dist: $(NAME)$(EXT)
@@ -133,7 +133,7 @@ ifeq ($(PLATFORM), WINDOWS)
 	@cp $(NAME).exe Build_Windows/$(NAME)/
 	@cp -r assets Build_Windows/$(NAME)/assets
 else
-	@echo "Error: 'make dist' is only for MacOS."
+	@echo "Error: '$(MAKE) dist' is only for MacOS."
 endif
 
 clean:
@@ -143,7 +143,7 @@ clean:
 fclean: clean
 	@$(RM) $(NAME) $(NAME).exe
 	@$(RM) -r $(NAME).app
-	make -C $(RAYLIB_PATH) clean
+	$(MAKE) -C $(RAYLIB_PATH) clean
 
 re: fclean all
 

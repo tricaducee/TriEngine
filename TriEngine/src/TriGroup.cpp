@@ -119,6 +119,10 @@ int			Tri::Group::supCollidedObj(Object &object) {
 
 void		Tri::Group::draw() {
 	Rectangle	camera = Tri::camera().getSpeededCameraRec(this->cameraSpeed);
+	camera.x -= 150.0f;
+    camera.y -= 150.0f;
+    camera.width += 300.0f;
+    camera.height += 300.0f;
 	if (!this->checkGroupCollision(camera))
 		return ;
 	for	(const auto& groupGroup : this->_groupVec)

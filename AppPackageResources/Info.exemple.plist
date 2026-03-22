@@ -3,16 +3,16 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDisplayName</key>
-    <string>Mon Jeu</string>
+    <string>SeaBal</string>
     
     <key>CFBundleName</key>
-    <string>MonJeu</string>
+    <string>SeaBal</string>
 
     <key>CFBundleIdentifier</key>
-    <string>com.monstudio.monjeu</string>
+    <string>com.monstudio.seabal</string>
 
     <key>CFBundleExecutable</key>
-    <string>MonJeu</string>
+    <string>SeaBal</string>
 
     <key>CFBundlePackageType</key>
     <string>APPL</string>
